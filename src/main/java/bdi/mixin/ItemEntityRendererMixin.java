@@ -57,7 +57,7 @@ public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity>
         this.random.setSeed(seed);
 
         matrix.push();
-        BakedModel bakedModel = this.itemRenderer.getHeldItemModel(itemStack, dropped.world, null, seed);
+        BakedModel bakedModel = this.itemRenderer.getModel(itemStack, dropped.world, null, seed);
         boolean hasDepthInGui = bakedModel.hasDepth();
 
         // decide how many item layers to render
@@ -73,7 +73,7 @@ public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity>
         boolean renderBlockFlat = false;
         if(dropped.getStack().getItem() instanceof BlockItem && !(dropped.getStack().getItem() instanceof AliasedBlockItem)) {
             Block b = ((BlockItem) dropped.getStack().getItem()).getBlock();
-            VoxelShape shape = b.getOutlineShape(b.getDefaultState(), dropped.world, dropped.getBlockPos(), ShapeContext.absent());
+            VoxelShape shape = b.getDefaultState().getOutlineShape(dropped.world,dropped.getBlockPos());
 
             // Only blocks with a collision box of <.5 should be rendered flat
             if(shape.getMax(Direction.Axis.Y) <= .5) {
@@ -96,7 +96,7 @@ public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity>
         }
 
         // Item is flying through air
-        boolean isAboveWater = dropped.world.getBlockState(dropped.getBlockPos()).getFluidState().getFluid().isIn(FluidTags.WATER);
+        boolean isAboveWater = dropped.world.getBlockState(dropped.getBlockPos()).getFluidState().isIn(FluidTags.WATER);
         if(!dropped.isOnGround() && (!dropped.isSubmergedInWater() && !isAboveWater)) {
             float rotation = ((float) dropped.getItemAge() + partialTicks) / 20.0F + dropped.getHeight(); // calculate rotation based on age and ticks
 
